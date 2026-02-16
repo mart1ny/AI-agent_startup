@@ -26,7 +26,6 @@ class ZvecVectorStore(VectorStore):
                 zvec.Doc(
                     id=doc.doc_id,
                     vectors={"embedding": doc.vector},
-                    fields=doc.metadata or None,
                 )
             )
         if docs:
