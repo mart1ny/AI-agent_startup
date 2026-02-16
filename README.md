@@ -14,3 +14,9 @@
 - `src/idea_service/application` — use-cases.
 - `src/idea_service/infrastructure` — адаптеры и хранилища.
 - `src/idea_service/presentation` — API слой.
+
+## Локальная база данных
+
+1) Создать `.env` по примеру `.env.example`.
+2) Запустить Postgres:
+   `docker-compose up -d postgres`
