@@ -18,12 +18,11 @@ class ZvecVectorStore(VectorStore):
     def upsert_documents(self, documents: Iterable[VectorDocument]) -> None:
         docs = []
         for doc in documents:
-            doc_fields = doc.metadata or {}
             docs.append(
                 zvec.Doc(
                     id=doc.doc_id,
                     vectors={"embedding": doc.vector},
-                    **doc_fields,
+                    fields=doc.metadata or None,
                 )
             )
         if docs:
@@ -36,6 +35,15 @@ class ZvecVectorStore(VectorStore):
         )
         parsed: List[VectorSearchResult] = []
         for item in results:
+            if isinstance(item, zvec.Doc):
+                parsed.append(
+                    VectorSearchResult(
+                        doc_id=item.id,
+                        score=float(item.score or 0.0),
+                        metadata=item.fields or None,
+                    )
+                )
+                continue
             metadata = {k: v for k, v in item.items() if k not in {"id", "score"}}
             parsed.append(
                 VectorSearchResult(
@@ -54,6 +62,17 @@ class ZvecVectorStore(VectorStore):
         doc = self._collection.fetch(doc_id)
         if not doc:
             return None
+        if isinstance(doc, zvec.Doc):
+            vector = None
+            if doc.vectors:
+                vector = doc.vectors.get("embedding")
+            if vector is None:
+                return None
+            return VectorDocument(
+                doc_id=doc.id,
+                vector=list(vector),
+                metadata=doc.fields or None,
+            )
         vectors = doc.get("vectors") or {}
         vector = vectors.get("embedding")
         if vector is None:
