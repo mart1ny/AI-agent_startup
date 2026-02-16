@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Iterable, List, Optional
 
 import zvec
@@ -13,7 +14,10 @@ class ZvecVectorStore(VectorStore):
             name=collection_name,
             vectors=zvec.VectorSchema("embedding", zvec.DataType.VECTOR_FP32, vector_dim),
         )
-        self._collection = zvec.create_and_open(path=path, schema=schema)
+        if os.path.exists(path):
+            self._collection = zvec.open(path=path)
+        else:
+            self._collection = zvec.create_and_open(path=path, schema=schema)
 
     def upsert_documents(self, documents: Iterable[VectorDocument]) -> None:
         docs = []
