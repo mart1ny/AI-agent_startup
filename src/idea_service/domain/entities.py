@@ -32,3 +32,12 @@ class Feedback:
     comment: Optional[str] = None
     success: Optional[bool] = None
     created_at: Optional[datetime] = None
+
+
+@dataclass(frozen=True)
+class DriftMetric:
+    metric_date: datetime
+    metric_name: str
+    metric_value: float
+    model_version: str
+    prompt_version: str
