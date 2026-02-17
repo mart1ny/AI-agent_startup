@@ -1,5 +1,8 @@
-.venv/
+.venv
 __pycache__/
 local_zvec/
+local_zvec_kb/
 *.pyc
 .env
+study_materials.md
+models/
